@@ -1,9 +1,10 @@
 #include "testApp.h"
 
 #define USE_OPENNI 1
+#define MAX_CIRCLES 200
 
 void testApp::setup(){
-	
+    
 	ofBackground(255, 255, 255);
     ofSetFrameRate(60);
 	
@@ -31,8 +32,8 @@ void testApp::setup(){
 	
     // setup box2d
 	physics.init();
-	physics.createBounds();
-	physics.setGravity(0, 10);
+	//physics.createBounds();
+	physics.setGravity(0, 25);
 	physics.checkBounds(true);
     
     isAutoCirclePopulating = true;
@@ -106,8 +107,12 @@ void testApp::update(){
 	if(isAutoCirclePopulating   &&  (int)ofRandom(0, 10) == 0) {
 		ofxBox2dCircle c;
 		c.setPhysics(1, 0.5, 0.1);
-		c.setup(physics.getWorld(), mouseX, mouseY, ofRandom(3, 10));
+		c.setup(physics.getWorld(), ofRandom(0, ofGetWidth()), -40, ofRandom(8, 25));
 		circles.push_back(c);
+        
+        if (circles.size() > MAX_CIRCLES) {
+            circles.pop_back();
+        }
 	}
 
 	
