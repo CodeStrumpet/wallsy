@@ -23,6 +23,7 @@ void testApp::setup(){
         openNI.setDepthColoring(COLORING_GREY);
 
         openNI.start();
+        
     } else {
         vidGrabber.setDeviceID(0);
         vidGrabber.initGrabber(CAM_WIDTH, CAM_HEIGHT);        
@@ -55,7 +56,7 @@ void testApp::update(){
 	if (vidGrabber.isFrameNew() || openNI.isNewFrame()) 
 	{
         
-        if (USE_OPENNI && openNI.isPlaying()) {
+        if (USE_OPENNI /*&& (openNI.isInfraOn() || openNI.isPlaying())*/) {
 
             colorImage.setFromPixels(openNI.getDepthPixels().getChannel(0));
             
@@ -116,16 +117,16 @@ void testApp::update(){
 void testApp::draw(){
 
 	
-     ofSetColor(255, 255, 255);
-    
+    ofSetColor(255, 255, 255);
+    ofSetLineWidth(1);
     
     colorImage.draw(CAM_WIDTH, 0);
 	
     // Thresholded image + contour finder
 	
-    ofSetColor(0, 0, 255);
+    ofSetHexColor(0x1826B0);
     threImg.draw(0, 0);
-    contourFinder.draw(0, 0);
+    //contourFinder.draw(0, 0);
 	
     // Triangulation
 	
@@ -134,18 +135,28 @@ void testApp::draw(){
 	// Physics
 
 	int i;
-	ofSetColor(0, 255, 0);
+    ofFill();
 	nbCircles = circles.size();
-	for(i=0; i<nbCircles; i++) circles[i].draw();
+	for(i=0; i<nbCircles; i++) {
+        ofSetHexColor(0xFFE200);
+        circles[i].draw();
+        //9303A7
+    }
+    ofNoFill();
+    for(i=0; i<nbCircles; i++) {
+        ofSetHexColor(0x9303A7);
+        circles[i].draw();
+    }
 	
-    //ofNoFill();
-    ofSetColor(255, 0, 0);
+    ofNoFill();
+    ofSetHexColor(0x2E3784);
 	for(i=polys.size()-1; i>=0; i--) {
 		polys[i].draw();
 	}
     
     // Draw enviroPolys and lines
-	ofSetHexColor(0x444342);
+	ofSetHexColor(0x4C59D8);
+    ofSetLineWidth(4);
 	ofNoFill();
 	for (int i=0; i<lines.size(); i++) {
 		lines[i].draw();
@@ -164,26 +175,6 @@ void testApp::draw(){
     //ofDrawBitmapString("nb Triangles : " + ofToString(triangle.nTriangles), 10, CAM_HEIGHT + 40);
     ofDrawBitmapString("nb Circles : " + ofToString(nbCircles), 10, CAM_HEIGHT + 60);
     
-    
-   
-    
-    // openNI debug
-    if (openNI.isDepthOn() || openNI.isPlaying()) {
-        
-        /*
-        ofxCvGrayscaleImage grayImage;
-        grayImage.allocate(CAM_WIDTH, CAM_HEIGHT);
-        grayImage.setFromPixels(openNI.getDepthPixels().getChannel(0));
-        grayImage.draw(0, 0);
-        */
-        //openNI.getDepthTextureReference().draw(0, 0);
-        
-        //colorImage.setFromPixels(&openNI.getDepthPixels()[0], 640, 480);
-        //colorImage.draw(0, 0);
-        
-        //openNI.getDepthTextureReference().draw(0, 0);
-        //openNI.drawDebug(0, 0);
-    }
 }
 
 void testApp::loadEnviroPolys() {
