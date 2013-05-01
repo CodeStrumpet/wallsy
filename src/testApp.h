@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxBox2d.h"
+#include "ofxOpenNI.h"
 
 #define CAM_WIDTH      640
 #define CAM_HEIGHT     480
@@ -18,7 +19,7 @@ public:
 
 private:
 	ofVideoGrabber          vidGrabber;
-	ofxCvColorImage         colorImage;
+	ofxCvGrayscaleImage         colorImage;
 	ofxCvGrayscaleImage     threImg;
 	ofxCvGrayscaleImage     bgImg;
 	ofxCvContourFinder      contourFinder;
@@ -27,6 +28,8 @@ private:
 	vector <ofxBox2dCircle>  circles;
 	vector <ofxBox2dPolygon> polys;
 	int						 nbCircles;
+    
+    ofxOpenNI               openNI;
 	
 	int                      threshold;
 	bool                     bLearnBackground;
