@@ -1,7 +1,7 @@
 #include "testApp.h"
 
 #define USE_OPENNI 1
-#define MAX_CIRCLES 200
+#define MAX_CIRCLES 100
 
 void testApp::setup(){
     
@@ -22,8 +22,10 @@ void testApp::setup(){
         openNI.addUserGenerator();
         openNI.setMaxNumUsers(2);
         openNI.setDepthColoring(COLORING_GREY);
-
         openNI.start();
+        
+        openNI.setUseMaskPixelsAllUsers(true);
+        //openNI.setUseMaskTextureAllUsers(true);
         
     } else {
         vidGrabber.setDeviceID(0);
@@ -57,9 +59,20 @@ void testApp::update(){
 	if (vidGrabber.isFrameNew() || openNI.isNewFrame()) 
 	{
         
-        if (USE_OPENNI /*&& (openNI.isInfraOn() || openNI.isPlaying())*/) {
 
-            colorImage.setFromPixels(openNI.getDepthPixels().getChannel(0));
+        if (USE_OPENNI && openNI.isDepthOn()) {
+            
+            int numUsers = openNI.getNumTrackedUsers();
+            if (false && numUsers > 0) { // Disabled!!!
+                
+                ofxOpenNIUser & user = openNI.getTrackedUser(0);
+                colorImage.setFromPixels(user.getMaskPixels());
+            } else {
+                
+                colorImage.setFromPixels(openNI.getDepthPixels().getChannel(0));
+                
+            }
+            
             
         } else if (vidGrabber.isInitialized()) {
             colorImage.setFromPixels(vidGrabber.getPixels(), CAM_WIDTH, CAM_HEIGHT);
@@ -109,6 +122,7 @@ void testApp::update(){
 		c.setPhysics(1, 0.5, 0.1);
 		c.setup(physics.getWorld(), ofRandom(0, ofGetWidth()), -40, ofRandom(8, 25));
 		circles.push_back(c);
+        
         
         if (circles.size() > MAX_CIRCLES) {
             circles.pop_back();
@@ -169,8 +183,6 @@ void testApp::draw(){
 	for (int i=0; i<enviroPolys.size(); i++) {
 		enviroPolys[i].draw();
 	}
-
-    
     
 
     // Infos
