@@ -117,7 +117,7 @@ void testApp::update(){
 	}
     
     // add some circles every so often if enabled
-	if(isAutoCirclePopulating   &&  (int)ofRandom(0, 10) == 0) {
+	if(isAutoCirclePopulating   &&  (int)ofRandom(0, 3) == 0) {
 		ofxBox2dCircle c;
 		c.setPhysics(1, 0.5, 0.1);
 		c.setup(physics.getWorld(), ofRandom(0, ofGetWidth()), -40, ofRandom(8, 25));
@@ -125,7 +125,12 @@ void testApp::update(){
         
         
         if (circles.size() > MAX_CIRCLES) {
-            circles.pop_back();
+            
+            auto i(circles.begin());
+            
+            i->destroy();
+            
+            circles.erase(i);
         }
 	}
 
